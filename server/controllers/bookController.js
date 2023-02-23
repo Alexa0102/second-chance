@@ -1,4 +1,4 @@
-const { getAllBooks, addBook, getOneBook, editBook, getProfileBooks, getThreeBooks,deleteBook } = require('../services/bookService');
+const { addItem, getAllItems, getOneItem, editItem, deleteItem, getProfileItems, } = require('../services/itemService');
 const { updateBooks } = require('../services/userService');
 const jwtDecode = require('jwt-decode');
 const User = require('../models/User');
@@ -9,33 +9,33 @@ router.post('/', async (req, res) => {
     const token = jwtDecode(data.token);
     try {
         const userId = token._id;
-        const book = await addBook(data, userId)
-        res.status(201).json(book)
+        const item = await addItem(data, userId)
+        res.status(201).json(item)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
 })
 
 router.get('/', async (req, res) => {
-    const books = await getAllBooks()
-    res.status(200).json(books)
+    const items = await getAllItems()
+    res.status(200).json(items)
 })
 
 
-router.get('/top', async (req, res) => {
+// router.get('/top', async (req, res) => {
   
-    const books = await getThreeBooks()
-    res.status(200).json(books)
-})
+//     const books = await getT()
+//     res.status(200).json(books)
+// })
 router.get('/:id', async (req, res) => {
     try {
         let id = req.params.id;
         
-        const book = await getOneBook(id);
-        if (book) {
-            res.status(200).json(book)
+        const item = await getOneItem(id);
+        if (item) {
+            res.status(200).json(item)
         } else {
-            throw new Error('Invalid book ID!')
+            throw new Error('Invalid item ID!')
         }
     } catch (error) {
         console.log(error)
@@ -45,14 +45,14 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const id = req.params.id;
     const data = req.body;
-    const book = await getOneBook(id)
+    const item = await getOneItem(id);
     try {
         const token = jwtDecode(data.token);
         const userId = token._id;
-        if (userId == book.owner._id) {
-            await editBook(id, data)
-            const updatedBook = await getOneBook(id)
-            res.status(200).json(updatedBook)
+        if (userId == item.owner._id) {
+            await editItem(id, data)
+            const updateItem = await getOneItem(id)
+            res.status(200).json(updateItem)
         } else {
             throw new Error('You are not the owner!')
         }
@@ -63,16 +63,16 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
-    await deleteBook(req.params.id);
-    res.status(200).json('book deleted!')
+    await deleteItem(req.params.id);
+    res.status(200).json('item deleted!')
 });
 
-router.post('/mybooks', async (req, res) => {
+router.post('/myitems', async (req, res) => {
     const data = req.body;
     const token = jwtDecode(data.token);
     const userId = token._id;
-    const books = await getProfileBooks(userId);
-    res.status(200).json(books)
+    const items = await getProfileItems(userId);
+    res.status(200).json(items)
     res.end()
 })
 module.exports = router;

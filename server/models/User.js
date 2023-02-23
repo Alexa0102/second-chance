@@ -19,10 +19,10 @@ const userSchema = new Schema({
         minlength: [6, 'Password should have at least 6 characters!'],
         maxlength: [12, 'Password cannot have more than 12 characters!'],
     },
-    books: [
+    items: [
         {
             type: Types.ObjectId,
-            ref: 'Book',
+            ref: 'Item',
         }
     ]
 })
